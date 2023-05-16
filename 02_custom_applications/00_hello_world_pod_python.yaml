@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-world-custom
+spec:
+  containers:
+    - name: hello-container
+      image: localhost:5001/alpine-python:0.1
+      command: [ "python3" ]
+      args:
+        - "-c"
+        - |
+          from time import sleep
+          import logging 
+          logging.basicConfig(level="INFO")
+          logger = logging.getLogger()
+          logger.info("Hello, World!")
+          sleep(3600)

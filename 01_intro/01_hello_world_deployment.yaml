@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-world-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-world-app
+  template:
+    metadata:
+      labels:
+        app: hello-world-app
+    spec:
+      containers:
+        - name: hello-world-container
+          image: alpine
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - |
+              echo "Hello, World!"
+              sleep 3600
