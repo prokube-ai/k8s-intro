@@ -202,7 +202,8 @@ curl localhost:8082
 That service is now reachable under the pods ip on port 80 inside the cluster,
 on port 8080 on the services IP and name `echo-service.default.svc.cluster.local` (also
 only inside the cluster) and also on port 30888 on the nodes IP (e.g. your
-localhost), but only if kind is configured as required (see kind website).
+localhost), but only if kind is configured as required (see
+[kind docs](https://kind.sigs.k8s.io/docs/user/configuration/#extra-port-mappings)).
 
 Try it from curl from inside your cluster:
 
