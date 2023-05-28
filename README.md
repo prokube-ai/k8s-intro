@@ -227,7 +227,7 @@ Then deploy `03_services/echo-deployment.yaml`.
 
 Services and deployments work well together, but one does not require the other.
 
-![Services and Pods](networking.png.jpg)
+![Services and Pods](networking.png)
 
 ## Namespaces
 Namespaces (or short ns) divide your cluster into several virtual clusters.
