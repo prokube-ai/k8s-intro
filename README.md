@@ -227,7 +227,7 @@ Then deploy `03_services/echo-deployment.yaml`.
 
 Services and deployments work well together, but one does not require the other.
 
-### More advanced networking
+![Services and Pods](networking.png.jpg)
 
 ## Namespaces
 Namespaces (or short ns) divide your cluster into several virtual clusters.
@@ -261,5 +261,7 @@ Try to create a deployment in the custom-application namespace.
 ## Config maps and secrets
 
 ## Storage
+
 ## Networking
+
 dnsutils
