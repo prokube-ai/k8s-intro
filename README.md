@@ -32,6 +32,11 @@ or with registry:
 sh 00_kind/start_kind_with_registry.sh
 ```
 
+## Deleting a cluster
+```shell
+kind delete cluster
+```
+
 ## Interacting with cluster - kubectl
 
 ```shell
@@ -94,6 +99,24 @@ Deleting:
 kubectl delete pod hello-world -n default
 ```
 
+## What is a pod?
+
+```
+kubectl explain pod
+```
+Also works for all other objects.
+
+### kubectl
+
+`kubectl <command> <resource> <options>`
+
+#### commands
+
+* create
+* replace
+* apply
+* delete
+
 ### Deployments
 
 Deploying:
@@ -146,8 +169,97 @@ deploy:
 ```shell
 kubectl apply -f 02_custom_applications/01_python_app.yaml
 ```
+
+## Networking and Services
+`Services` forward networking requests to groups of pods selected by labels.
+
+Apply an example echo pod and accompanying service and have a look at the yaml
+file:
+
+```shell
+kubectl apply -f 03_services/pods_and_service.yaml
+```
+
+Check the output `kubectl get svc -o wide`.
+
+Forward the port of the service and the single pod:
+
+```shell
+kubectl port-forward service/echo-service 8081:8080
+```
+
+```shell
+kubectl port-forward echo-server-1 8082:80
+```
+
+Test the services with curl:
+
+```
+curl localhost:8081
+curl localhost:8082
+```
+
+That service is now reachable under the pods ip on port 80 inside the cluster,
+on port 8080 on the services IP and name `echo-service.default.svc.cluster.local` (also
+only inside the cluster) and also on port 30888 on the nodes IP (e.g. your
+localhost), but only if kind is configured as required (see kind website).
+
+Try it from curl from inside your cluster:
+
+```bash
+kubectl run curlpod --image=curlimages/curl -i --tty -- sh
+```
+
+
+Deploy a second pod with the same label:
+
+```bash
+kubectl apply -f 03_services/second_pod.yaml
+```
+
+observe what happens when you curl against the service, use
+`kubectl logs -f <pod-name>`.
+
+Delete both pods (`kubectl delete pod <pod-name>`) and try to curl against the
+service.
+
+Then deploy `03_services/echo-deployment.yaml`.
+
+Services and deployments work well together, but one does not require the other.
+
+### More advanced networking
+
+## Namespaces
+Namespaces (or short ns) divide your cluster into several virtual clusters.
+
+Check the namespaces currently installed (`kubectl get ns`).
+
+Create a new namespace:
+
+```shell
+kubectl create ns my-custom-ns
+```
+and check if it has been created, then delete it.
+
+Create a new namespace from the `custom_ns.yaml` file:
+
+```shell
+kubectl apply -f custom_ns.yaml
+```
+
+What is the name of that namespace?
+
+Some resources are namespaced (like pods or deployments), others not (like
+namespaces themselves).
+
+By default, `kubectl` uses the default namespace. You can use the `-n
+<namespace>` flag to specify a namespace for most kubectl commands.
+
+Try to create a deployment in the custom-application namespace.
+
+
 ## Config maps and secrets
 
+## Storage
 ## Networking
-curlpod
 dnsutils

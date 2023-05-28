@@ -1,0 +1,33 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: echo-server-1
+  labels:
+    app: echo-server
+    app-version: v1
+spec:
+  containers:
+    - name: echo-server
+      image: ealen/echo-server
+      ports:
+        - containerPort: 80
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: echo-service
+spec:
+  # expose the service on a port of the cluster nodes' (e.g. your laptop)
+  type: NodePort
+  # we filter for pods with the label `app = echo-server`
+  selector:
+    app: echo-server
+  ports:
+  # Three types of ports for a service
+  # nodePort: the port used on a node (your laptop)
+  # port: the port the service is exposed inside the cluster
+  # targetPort: the port that is used on the container, should match that Pod's
+  #             container Port
+  - nodePort: 30888
+    port: 8080
+    targetPort: 80

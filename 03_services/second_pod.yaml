@@ -1,0 +1,13 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: echo-server-2
+  labels:
+    app: echo-server
+    app-version: v1
+spec:
+  containers:
+    - name: echo-server
+      image: ealen/echo-server
+      ports:
+        - containerPort: 80
