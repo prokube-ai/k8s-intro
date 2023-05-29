@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-cm-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hello-cm-app
+  template:
+    metadata:
+      labels:
+        app: hello-cm-app
+    spec:
+      containers:
+        - name: hello-world-container
+          image: alpine
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - |
+              echo "$SOME_CONFIG_VAR"
+              sleep 3600
+          env:
+          - name: SOME_CONFIG_VAR
+            valueFrom:
+              configMapKeyRef:
+                name: my-cm
+                key: env.config_var
