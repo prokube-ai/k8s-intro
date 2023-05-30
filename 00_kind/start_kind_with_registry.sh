@@ -25,8 +25,6 @@ nodes:
     hostPort: 30888
     listenAddress: "0.0.0.0"
     protocol: tcp
-- role: worker
-
 EOF
 
 # connect the registry to the cluster network if not already connected
