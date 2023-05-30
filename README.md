@@ -35,6 +35,17 @@ Provide A way of dividing k8s resources. Provide scopes for Kubernetes resources
 authorizations and other policies to a subsection of the cluster.  
 Can be used for staging (e.g. dev, test, prod), can also be used to achieve multitenancy.
 
+## Further Reading
+The [official kubernetes documentation is quite good](https://kubernetes.io/docs/home/), note this doesn't extend to a lot of
+the other projects in the kubernetes ecosystem. Have a look at their
+[tutorials](https://kubernetes.io/docs/tutorials/) or the [explanation of pods](https://kubernetes.io/docs/concepts/workloads/pods/).
+
+Some other literature we can recommend:
+* [Kubernetes App Development](https://matthewpalmer.net/kubernetes-app-developer/), very short but gets you very well started
+* [Kubernetes in Action](https://www.manning.com/books/kubernetes-in-action-second-edition), very thorough,
+  1st edition somewhat outdated, 2nd edition only available as a preview
+* [Kubernetes Patterns](https://www.oreilly.com/library/view/kubernetes-patterns-2nd/9781098131678/), a bit more advanced material
+
 ## Getting started
 We first need a Kubernetes distribution. For local development [kind](https://kind.sigs.k8s.io) is a good fit.
 It stands for Kubernetes In Docker and runs a whole cluster within docker.  
