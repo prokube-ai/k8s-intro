@@ -12,6 +12,8 @@ Software you need for this workshop:
 
 ![k8s diagram](graphics/k8s-basic-diagram.png)
 
+Kubernetes is often shortened to K8s (there are 8 letters between K and s).
+
 ### Containers
 Are a unit of functionality that addresses a single concern. A container image is self-contained and defines and 
 carries its runtime dependencies.
