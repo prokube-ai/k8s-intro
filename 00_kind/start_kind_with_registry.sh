@@ -18,6 +18,15 @@ containerdConfigPatches:
 - |-
   [plugins."io.containerd.grpc.v1.cri".registry.mirrors."localhost:${reg_port}"]
     endpoint = ["http://${reg_name}:5000"]
+nodes:
+- role: control-plane
+  extraPortMappings:
+  - containerPort: 30888
+    hostPort: 30888
+    listenAddress: "0.0.0.0"
+    protocol: tcp
+- role: worker
+
 EOF
 
 # connect the registry to the cluster network if not already connected
