@@ -349,7 +349,31 @@ kubectl exec -it mount-cm-pod -- sh
 
 ## Storage
 
-## Networking
 
-dnsutils
+## Jobs
 
+
+## Installing applications
+### Helm vs Kustomize
+Helm:
+* Imperative
+* Templating
+* Packages
+* Added abstraction
+* Not natively supported
+
+Kustomize:
+* Declarative
+* Built into kubectl
+* Works on plain yamls/manifests
+* Minimal
+* Overlays/patches
+
+### Helm
+
+### Kustomize
+
+Patches
+Replacing a variable
+Replacing image
+Generating configmaps
