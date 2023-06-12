@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: echo-server
+  template:
+    spec:
+      containers:
+        - name: echo-server
+          image: ealen/echo-server
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /files/
+              name: my-files
+            - mountPath: /other-files-but-with-a-cooler-name/
+              name: my-other-files-with-another-name
+          env:
+            - name: FILES_PATH
+              value: "/files/"
+            - name: FILES_OTHER_PATH
+              value: "/files-other-but-you-can-user-another-name-too/"
+      volumes:
+      - name: my-files
+        configMap:
+          name: cm-07
+          defaultMode: 0777
+      - name: my-other-files-with-another-name
+        configMap:
+          name: cm-07
+          defaultMode: 0555
