@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: hello-world-deployment
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 120
+      template:
+        metadata:
+          labels:
+            app: hello-world-app
+        spec:
+          containers:
+            - name: hello-world-container
+              image: alpine
+              command: ["/bin/sh"]
+              args:
+                - "-c"
+                - |
+                  echo "Hello, World"!
+          restartPolicy: Never

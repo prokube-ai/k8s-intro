@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-world
+  namespace: dummy-namespace
+spec:
+  containers:
+    - name: hello-container
+      image: alpine
+      command: [ "/bin/sh" ]
+      args:
+        - "-c"
+        - |
+          echo "Hello, World!"
+          sleep 3600

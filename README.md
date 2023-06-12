@@ -351,7 +351,8 @@ kubectl exec -it mount-cm-pod -- sh
 
 
 ## Jobs
-
+CronJob documentation can be found here: [CronJob Docu](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)
+Cron syntax is explained here: [Cron Syntax](https://en.wikipedia.org/wiki/Cron)
 
 ## Installing applications
 ### Helm vs Kustomize
@@ -373,7 +374,10 @@ Kustomize:
 
 ### Kustomize
 
-Patches
-Replacing a variable
-Replacing image
-Generating configmaps
+Use cases:
+- Patches
+- Replacing a variable
+- Replacing image
+- Generating configmaps
+
+The kustomize documentation can be found here: [Kustomize](https://kubectl.docs.kubernetes.io/guides/)
