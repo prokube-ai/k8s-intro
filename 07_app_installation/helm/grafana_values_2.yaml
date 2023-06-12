@@ -1,0 +1,6 @@
+adminUser: test
+adminPassword: totally_secret
+
+service:
+  type: NodePort
+  nodePort: 30888

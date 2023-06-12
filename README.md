@@ -371,6 +371,53 @@ Kustomize:
 * Overlays/patches
 
 ### Helm
+[Website](https://helm.sh/)
+Based around templates called "charts".
+
+If you haven't install helm: `brew install helm`
+
+[Artificat Hub](https://artifacthub.io/packages/search?kind=0) is a central
+repository for helm charts.
+
+Let's install grafana as an example:
+
+```
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm install mygrafana grafana/grafana
+```
+
+`grafana/grafana` is the chart (first grafana is the repo, second grafana is the
+chart), `mygrafana` is the name of the installed "release".
+
+Have a look at what pods, services, deployments etc were created.
+
+Let's delete it again: `helm uninstall mygrafana` (sometimes there are
+leftovers).
+
+Next time, install into a specific namespace with `-n <namespace`. If the
+namespace doesn't exist yet, helm can create it for us `--create-namespace`.
+
+Let's change some settings.
+
+What settings exist?
+
+`helm show values grafana/grafana` or see website.
+
+Let's change the admin username and password:
+`helm install mygrafana grafana/grafana -f 07_app_installation/helm/grafana_values.yaml`
+
+Try to login with the settings from `grafana_values.yaml`.
+
+Want to use a NodePort with the service? Try to use `grafana_values2.yaml`.
+
+Helm also supports role-backs and lots of other cool things.
+Reasonably easy to create your own charts, including dependecies on other
+charts.
+
+#### Why not helm?
+Hard to customize anything that creators of a chart didn't think about.
+
 
 ### Kustomize
 
