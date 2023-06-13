@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counter-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: counter-server
+  template:
+    metadata:
+      labels:
+        app: counter-server
+        app-version: v1
+    spec:
+      containers:
+        - name: counter-server
+          image: localhost:5001/python-counter:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: counter-service
+spec:
+  # expose the service on a port of the cluster nodes' (e.g. your laptop)
+  type: NodePort
+  # we filter for pods with the label `app = counter-server`
+  selector:
+    app: counter-server
+  ports:
+  # Three types of ports for a service
+  # nodePort: the port used on a node (your laptop)
+  # port: the port the service is exposed inside the cluster
+  # targetPort: the port that is used on the container, should match that Pod's
+  #             container Port
+  - nodePort: 30888
+    port: 8080
+    targetPort: 8000

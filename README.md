@@ -348,7 +348,62 @@ kubectl exec -it mount-cm-pod -- sh
 ```
 
 ## Storage
+K8s was meant for ephemeral workloads (no state saved inside the cluster).
+By default, the filesystem is gone after your pod is terminated.
 
+Let's see how this works.
+
+Have a look at `06_storage/app.py`. It's a simple webserver that returns the
+number of requests it has answered until now. That data is persistet locally
+into a file called `counter.txt`. Run it with `python 06_storage/app.py` and go
+to `http://localhost:8000`. Refresh the site several times. Kill the python
+process, restart it, and restart the website.
+
+Build the app as a Docker container:
+
+```
+docker build . -t localhost:5001/python-counter:0.1
+docker push localhost:5001/python-counter:0.1
+```
+
+Create the app as a k8s service: `kubectl apply -f
+06_storage/counter_service.yaml` and go to http://localhost:30888. Reload and
+the number should increase.
+
+Now restart the deployment: `kubectl rollout restart deployment counter-deployment` and reload the webpage. Your count is gone.
+
+
+#### Let's make this persistent.
+
+Have a look at `06_storage/counter_service_persistent.yaml` and deploy it and
+increase the counter. Thene delete the pod or restart the deployment. What does
+the counter say?
+
+Have a look at:
+
+* `kubectl get pvc`
+* `kubectl get pv`
+* `kubectl get sc`
+
+Delete the deployment. Have a look at pvcs, pvs, and scs again.
+Redeploy, check your counter. Where is our data?
+
+#### Let's make this even more persistent
+Have a look at `06_storage/counter_service_more_persistent.yaml` and do the same as
+above.
+
+hostPath is a terrible idea for production, especially if you have a multi node
+cluster (unless you really know what you are doing).
+
+#### Storage is hard on k8
+Especially if you are not in the cloud.
+
+
+#### Note: Deployments are not great for what we did above
+
+Use StatefulSets instead:
+
+StatefulSets in Kubernetes are a workload API object used to manage stateful applications, which are characterized by having a unique network identity and stable, persistent storage. Unlike other Kubernetes objects, like ReplicaSets or Deployments, each pod in a StatefulSet has a unique, sticky identity tied to its ordinal index, hostname, and optional stable network ID (derived from a headless Service). This identity is consistent across rescheduling, making it suitable for applications that require stable network identifiers, persistent storage, and ordered, graceful deployment and scaling. Examples of such applications include databases, key-value stores, and anything else that relies on a stable network identity or persistent data.
 
 ## Jobs
 CronJob documentation can be found here: [CronJob Docu](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)
@@ -371,6 +426,56 @@ Kustomize:
 * Overlays/patches
 
 ### Helm
+[Website](https://helm.sh/)
+Based around templates called "charts".
+
+If you haven't install helm: `brew install helm`
+
+[Artificat Hub](https://artifacthub.io/packages/search?kind=0) is a central
+repository for helm charts.
+
+Let's install grafana as an example:
+
+```
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+helm install mygrafana grafana/grafana
+```
+
+`grafana/grafana` is the chart (first grafana is the repo, second grafana is the
+chart), `mygrafana` is the name of the installed "release".
+
+Have a look at what pods, services, deployments etc were created.
+
+Let's delete it again: `helm uninstall mygrafana` (sometimes there are
+leftovers).
+
+Next time, install into a specific namespace with `-n <namespace`. If the
+namespace doesn't exist yet, helm can create it for us `--create-namespace`.
+
+Let's change some settings.
+
+What settings exist?
+
+`helm show values grafana/grafana` or see website.
+
+Let's change the admin username and password:
+`helm install mygrafana grafana/grafana -f 07_app_installation/helm/grafana_values.yaml`
+
+Try to login with the settings from `grafana_values.yaml`.
+
+Want to use a NodePort with the service? Try to use `grafana_values2.yaml`.
+
+Want to see (or use) the manifests?
+`helm template grafana/grafana -f 07_app_installation/helm/grafana_values_2.yaml`
+
+Helm also supports role-backs and lots of other cool things.
+Reasonably easy to create your own charts, including dependecies on other
+charts.
+
+#### Why not helm?
+Hard to customize anything that creators of a chart didn't think about.
+
 
 ### Kustomize
 
