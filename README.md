@@ -487,12 +487,12 @@ Use cases:
 
 The kustomize documentation can be found here: [Kustomize](https://kubectl.docs.kubernetes.io/guides/)
 
-Want to test a kustomization without applying it? You can do a dry run to see what the resulting yamls would look like:
+Want to test a kustomization without applying it? You can do a dry run to see what the resulting yamls would look like:  
 `kubectl kustomize path/to/kustomization/`
 
-Want to apply it? You can use either command:
+Want to apply it? You can use either command:  
 `kubectl apply -k path/to/kustomization/`
 `kubectl kustomize path/to/kustomization | kubectl apply -f -`
 
-Want to delete the kustomization?
+Want to delete the kustomization?  
 `kubectl delete -k path/to/kustomization/`
