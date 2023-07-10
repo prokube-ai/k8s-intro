@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fibonacci-sum
+spec:
+  containers:
+  - name: python-script-container
+    image: python:3.9
+    command: ["python", "-c"]
+    args: 
+    - $(SCRIPT)
+    env:
+    - name: SCRIPT
+      valueFrom:
+        configMapKeyRef:
+          name: python-script
+          key: script.py
+    resources:
+      requests:
+        memory: "64Mi"
+        cpu: "100m"
+      limits:
+        memory: "64Mi"
+        cpu: "0.1"
