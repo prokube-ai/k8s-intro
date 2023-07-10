@@ -496,3 +496,90 @@ Want to apply it? You can use either command:
 
 Want to delete the kustomization?  
 `kubectl delete -k path/to/kustomization/`
+
+## RBAC
+
+RBAC = Role Based Access Control
+
+Consists of `Role`s (surprise!) and `RoleBinding`s. Roles set permissions to do
+something with specified resources while RoleBindings bind the Rules to Users,
+Groups, or Service Accounts.
+
+`ServiceAccount`s provide identies to processes running on k8s when the contact
+the k8s API.
+
+`Role`s and `RoleBinding`s are namespaced. There are also `ClusterRole` and
+`ClusterRoleBinding` which are not namespaced but valid cluster wide.
+
+Resources are all the API Objects we have already met (`Pod`s, `Service`s,
+`Deployment`s, etc.)
+
+Verbs are the operations on for those resources. Which operations exist somewhat
+depends on the objecs. The classics are `create`, `delete`, `get`, `list`,
+`patch`, `update`, `watch`.
+
+Have a look at the existing `ServiceAccounts`, `ClusterRole`s, and
+`ClusterRoleBindings`.
+
+## Interlude: Operators
+Operators provide a way to package, deploy, and manage a
+Kubernetes application in a more automated and scalable manner. These are
+essentially software extensions that use custom resources to manage applications
+and their components. They often use Custom Resource Definitions (CRDs) and
+Custom Resources (CRs) (We won't use those).
+
+We will now use [shell-operator](https://github.com/flant/shell-operator) to
+write our own operator. The operator will create a new `echo` pod in each newly
+created namespace.
+
+Have a look at `08_rbac/operator_example/complete.yaml`.
+
+## Back to RBAC
+
+Apply `08_rbac/operator_example/operator.yaml`, and create a new namespace (e.g.
+`kubectl create ns test`) observe the logs.
+You should see some permission denied messages. This is because our operator
+doesn't have the right permission yet. Check
+`08_rbac/operator_example/service_account.yaml` to see how we add a new
+ServiceAccount, ClusterRole and ClusterRoleBinding.
+
+Apply, create another test namespace, check the logs. What is still missing?
+Have a look at `08_rbac/operator_example/complete.yaml` and see the last missing
+permissions. Create another namespace.
+
+## Users
+
+The K8s API does not have a concept of users. Instead, if you have a certificate
+sign by the cluster's CA, the common name (CN) of that certificate is your user
+name, the organisation fields (O) are the groups you belong to.
+
+Check your current user name:
+
+```
+CERTIFICATE_DATA=$(kubectl config view --raw -o jsonpath='{.users[?(@.name == "kind-kind")].user.client-certificate-data}')
+echo $CERTIFICATE_DATA | base64 --decode > cert.pem
+openssl x509 -in cert.pem -text -noout
+rm cert.pem
+```
+
+Find out which `ClusterRoleBinding` exist for your username or group.
+
+## Create a new users
+You can create a new user by creating a new X509 certificate and get it signed
+by the k8s CA.
+
+Have a look at the script in `08_rbac/users/generate_role_for_user.sh` to see
+how it is done. The example script expects to create a user with the same name
+as an existing namespace. Run the script (e.g. `USER=ops bash generate_role_for_user.sh` and test access: 
+`kubectl get pods -n ops --kubeconfig ops-config/ops.config`.
+
+You can check if you are allowed to do a specific operation with `kubectl auth
+can-i create pods`.
+
+*You can also use something like keycloak for authentication against the API*
+
+### Security
+Lot's of chances to mess this up. Some good hinters in the
+[k8s docs](https://kubernetes.io/docs/concepts/security/rbac-good-practices/).
+
+
