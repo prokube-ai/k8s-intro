@@ -595,8 +595,8 @@ is short but thorough.
 You can set resources for cpu, memory and hugepages, each for limits and
 requests.
 
-Rules:
-* For CPU: requests = 0
+In Practice:
+* For CPU: do not use limits, but requests for all pods
 * For Memory: requests = limits
 
 You can also specify limits for namespaces, see `ResourceQuotas`.
