@@ -578,8 +578,29 @@ can-i create pods`.
 
 *You can also use something like keycloak for authentication against the API*
 
-### Security
+ 
 Lot's of chances to mess this up. Some good hinters in the
 [k8s docs](https://kubernetes.io/docs/concepts/security/rbac-good-practices/).
 
 
+## Resources
+
+You can specify how many resources your containers (containers, not pods!)
+should consume. 
+
+[The k8s
+documentation](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+is short but thorough.
+
+You can set resources for cpu, memory and hugepages, each for limits and
+requests.
+
+Rules:
+* For CPU: requests = 0
+* For Memory: requests = limits
+
+You can also specify limits for namespaces, see `ResourceQuotas`.
+
+In `09_resources` you can find a simple pod description that can be executed
+with low and high (cpu) limits, execute them and check the logs how long the
+computation took.
