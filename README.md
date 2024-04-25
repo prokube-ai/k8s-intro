@@ -101,11 +101,22 @@ Command line tool for interaction with k8s clusters.
 Commands:
 * get
 * create
+* describe
 * replace
 * apply
 * delete
 
-kubectl config: `~/.kube/`
+#### Context management
+The default config file for `kubectl` is `~/.kube/config`. This file defines clusters and users and links them as contexts. You can list and select the contexts with the `kubectl config` command.
+```shell
+kubectl config get-contexts
+kubectl config use-context <context-name>
+```
+
+As it is more convenient, most users use one file per cluster (per context, to be precise). Using the `.kubeconfig` file extension is also common. You can tell kubectl to use a different config file by setting the `KUBECONFIG` environment variable to the path of the file. `kubectl` will then automatically set the current context to the one defined in the file.
+```shell
+export KUBECONFIG=~/.kube/mycluster.kubeconfig
+```
 
 ## Deploying stuff
 Single command:
