@@ -23,21 +23,20 @@ A Pod is an atomic unit of scheduling, deployment, and runtime isolation for a g
 The only way to run a container is via pod!
 All containers in a Pod are always scheduled to the same host, are deployed and scaled together, and can also share 
 filesystem, networking, and process namespaces.  
-Containers within a pod interact via localhost. From outside pod looks like a single unix machine and have a single IP.  
-Pods are ephemeral. IP assigned only after it is scheduled.
+Containers within a pod interact via localhost. From outside, a pod looks like a single unix machine and has a single IP.  
+Pods are ephemeral. IP is assigned only after a pod is scheduled.
 
 ### Services
 Service binds service name to IP and port. It's a named entry for accessing applications.
-Service usually points to a set of pods. Also provide load balancing.
+Service usually points to a set of pods. Services also provide load balancing.
 
 ### Namespaces
-Provide A way of dividing k8s resources. Provide scopes for Kubernetes resources and a mechanism to apply 
+Provide a way of dividing k8s resources. Provide scopes for Kubernetes resources and a mechanism to apply 
 authorizations and other policies to a subsection of the cluster.  
 Can be used for staging (e.g. dev, test, prod), can also be used to achieve multitenancy.
 
 ## Further Reading
-The [official kubernetes documentation is quite good](https://kubernetes.io/docs/home/), note this doesn't extend to a lot of
-the other projects in the kubernetes ecosystem. Have a look at their
+The [official kubernetes documentation is quite good](https://kubernetes.io/docs/home/), note this doesn't extend to a lot of other projects in the kubernetes ecosystem. Have a look at their
 [tutorials](https://kubernetes.io/docs/tutorials/) or the [explanation of pods](https://kubernetes.io/docs/concepts/workloads/pods/).
 
 Some other literature we can recommend:
@@ -47,7 +46,7 @@ Some other literature we can recommend:
 * [Kubernetes Patterns](https://www.oreilly.com/library/view/kubernetes-patterns-2nd/9781098131678/), a bit more advanced material
 
 ## Getting started
-We first need a Kubernetes distribution. For local development [kind](https://kind.sigs.k8s.io) is a good fit.
+We first need a Kubernetes distribution. For local development, [kind](https://kind.sigs.k8s.io) is a good fit.
 It stands for Kubernetes In Docker and runs a whole cluster within docker.  
 
 ### Note about registry
@@ -56,7 +55,7 @@ are used. For development purposes we can host a registry locally. Use `00_kind/
 to start a kind cluster with registry linked to it.  
 
 #### Potential problems
-If the script complains about ports being taken use the following command to find the process occupying port 5001
+If the script complains about ports being taken, use the following command to find the process occupying port 5001
 and kill it.
 ```shell
 sudo lsof -i -n -P | grep TCP | grep 5001
@@ -91,7 +90,7 @@ kubectl get nodes # short: kubectl get no
 # Get nodes
 kubectl get namespaces # short: kubectl get ns
 # Get all pods
-kubectl get po -A # short: kubectl get po -A
+kubectl get pods -A # short: kubectl get po -A
 ```
 ### kubectl
 Command line tool for interaction with k8s clusters. 
@@ -124,8 +123,8 @@ Single command:
 kubectl run alpine --image=alpine -- sleep 600
 ```
 
-While it can convenient using `kubectl run` to deploy pods the preferred way is using manifests.
-Manifests are yaml (or json) documents describing resources you want to deploy on k8s. Here's an example:
+While it may be convenient to use `kubectl run` to deploy pods, the preferred way is to use manifests.
+Manifests are yaml (or json) documents, describing resources you want to deploy on k8s. Here's an example:
 
 ```yaml
 apiVersion: v1
@@ -318,29 +317,29 @@ and check if it has been created, then delete it.
 Create a new namespace from the `custom_ns.yaml` file:
 
 ```shell
-kubectl apply -f custom_ns.yaml
+kubectl apply -f 04_namespaces/custom_ns.yaml
 ```
 
 What is the name of that namespace?
 
-Some resources are namespaced (like pods or deployments), others not (like
+Some resources are namespaced (like pods or deployments), others are not (like
 namespaces themselves).
 
 By default, `kubectl` uses the default namespace. You can use the `-n
 <namespace>` flag to specify a namespace for most kubectl commands.
 
-Try to create a deployment in the custom-application namespace.
+Try to create a deployment in the "custom-application" namespace.
 
 
 ## Config maps and secrets
-ConfigMap holds configuration data for pods to consume.  
-Secret is similar to ConfigMap but for secrets. Can hold raw or base64 encoded secrets.  
+A ConfigMap holds configuration data that pods can consume.  
+A Secret is similar to a ConfigMap but is intended specifically for sensitive data. Can hold raw or base64-encoded secrets.  
 
-Data from ConfigMaps can be exposed in a pod as environmental variable or mounted as a file.  
+Data from ConfigMaps can be exposed in a pod as an environmental variable or mounted as a file.  
 Variable example:
 ```shell
-kubectl apply -f 04_configmaps/my_cm.yaml
-kubectl apply -f 04_configmaps/00_hello_cm_deployment.yaml
+kubectl apply -f 05_configmaps/my_cm.yaml
+kubectl apply -f 05_configmaps/00_hello_cm_deployment.yaml
 kubectl logs deployment.apps/hello-cm-deployment
 ```
 Modify configmap and restart deployment:
@@ -352,7 +351,7 @@ kubectl logs deployment.apps/hello-cm-deployment
 
 ConfigMap mounted as a file:
 ```shell
-kubectl apply -f 04_configmaps/01_mount_cm_pod.yaml
+kubectl apply -f 05_configmaps/01_mount_cm_pod.yaml
 kubectl logs pod/mount-cm-pod
 # Jump into the pod and check if that file exists
 kubectl exec -it mount-cm-pod -- sh
@@ -365,7 +364,7 @@ By default, the filesystem is gone after your pod is terminated.
 Let's see how this works.
 
 Have a look at `06_storage/app.py`. It's a simple webserver that returns the
-number of requests it has answered until now. That data is persistet locally
+number of requests it has answered until now. That data is persisted locally
 into a file called `counter.txt`. Run it with `python 06_storage/app.py` and go
 to `http://localhost:8000`. Refresh the site several times. Kill the python
 process, restart it, and restart the website.
@@ -378,16 +377,16 @@ docker push localhost:5001/python-counter:0.1
 ```
 
 Create the app as a k8s service: `kubectl apply -f
-06_storage/counter_service.yaml` and go to http://localhost:30888. Reload and
+06_storage/counter_service.yaml` and go to `http://localhost:30888`. Reload and
 the number should increase.
 
 Now restart the deployment: `kubectl rollout restart deployment counter-deployment` and reload the webpage. Your count is gone.
 
 
-#### Let's make this persistent.
+#### Let's make this persistent
 
 Have a look at `06_storage/counter_service_persistent.yaml` and deploy it and
-increase the counter. Thene delete the pod or restart the deployment. What does
+increase the counter. Then delete the pod or restart the deployment. What does
 the counter say?
 
 Have a look at:
@@ -416,10 +415,6 @@ Use StatefulSets instead:
 
 StatefulSets in Kubernetes are a workload API object used to manage stateful applications, which are characterized by having a unique network identity and stable, persistent storage. Unlike other Kubernetes objects, like ReplicaSets or Deployments, each pod in a StatefulSet has a unique, sticky identity tied to its ordinal index, hostname, and optional stable network ID (derived from a headless Service). This identity is consistent across rescheduling, making it suitable for applications that require stable network identifiers, persistent storage, and ordered, graceful deployment and scaling. Examples of such applications include databases, key-value stores, and anything else that relies on a stable network identity or persistent data.
 
-## Jobs
-CronJob documentation can be found here: [CronJob Docu](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/)
-Cron syntax is explained here: [Cron Syntax](https://en.wikipedia.org/wiki/Cron)
-
 ## Installing applications
 ### Helm vs Kustomize
 Helm:
@@ -437,12 +432,12 @@ Kustomize:
 * Overlays/patches
 
 ### Helm
-[Website](https://helm.sh/)
+[Website](https://helm.sh/)  
 Based around templates called "charts".
 
-If you haven't install helm: `brew install helm`
+If you haven't installed helm: `brew install helm`
 
-[Artificat Hub](https://artifacthub.io/packages/search?kind=0) is a central
+[Artifact Hub](https://artifacthub.io/packages/search?kind=0) is a central
 repository for helm charts.
 
 Let's install grafana as an example:
@@ -456,29 +451,38 @@ helm install mygrafana grafana/grafana
 `grafana/grafana` is the chart (first grafana is the repo, second grafana is the
 chart), `mygrafana` is the name of the installed "release".
 
-Have a look at what pods, services, deployments etc were created.
+Have a look at what pods, services, deployments etc. were created.
 
-Let's delete it again: `helm uninstall mygrafana` (sometimes there are
-leftovers).
+Let's delete it again: 
+```
+helm uninstall mygrafana
+```
+(sometimes there are leftovers).
 
-Next time, install into a specific namespace with `-n <namespace`. If the
-namespace doesn't exist yet, helm can create it for us `--create-namespace`.
+Next time, install into a specific namespace with `-n <namespace>`. If the
+namespace doesn't exist yet, helm can create it for us: `--create-namespace`.
 
 Let's change some settings.
 
 What settings exist?
-
-`helm show values grafana/grafana` or see website.
+```
+helm show values grafana/grafana
+```
+or see website.
 
 Let's change the admin username and password:
-`helm install mygrafana grafana/grafana -f 07_app_installation/helm/grafana_values.yaml`
+```
+helm install mygrafana grafana/grafana -f 07_app_installation/helm/grafana_values.yaml
+```
 
 Try to login with the settings from `grafana_values.yaml`.
 
 Want to use a NodePort with the service? Try to use `grafana_values2.yaml`.
 
 Want to see (or use) the manifests?
-`helm template grafana/grafana -f 07_app_installation/helm/grafana_values_2.yaml`
+```
+helm template grafana/grafana -f 07_app_installation/helm/grafana_values_2.yaml
+```
 
 Helm also supports role-backs and lots of other cool things.
 Reasonably easy to create your own charts, including dependecies on other
@@ -499,14 +503,27 @@ Use cases:
 The kustomize documentation can be found here: [Kustomize](https://kubectl.docs.kubernetes.io/guides/)
 
 Want to test a kustomization without applying it? You can do a dry run to see what the resulting yamls would look like:  
-`kubectl kustomize path/to/kustomization/`
+```
+kubectl kustomize path/to/kustomization/
+```
 
 Want to apply it? You can use either command:  
-`kubectl apply -k path/to/kustomization/`
-`kubectl kustomize path/to/kustomization | kubectl apply -f -`
+```
+kubectl apply -k path/to/kustomization/
+kubectl kustomize path/to/kustomization | kubectl apply -f -
+```
 
 Want to delete the kustomization?  
-`kubectl delete -k path/to/kustomization/`
+```
+kubectl delete -k path/to/kustomization/
+```
+
+## Jobs
+CronJob documentation can be found here: [CronJob Docu](https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/).  
+  
+Cron syntax is explained here: [Cron Syntax](https://en.wikipedia.org/wiki/Cron).
+  
+Have a look at `08_jobs/cronJob/`.
 
 ## RBAC
 
@@ -516,7 +533,7 @@ Consists of `Role`s (surprise!) and `RoleBinding`s. Roles set permissions to do
 something with specified resources while RoleBindings bind the Rules to Users,
 Groups, or Service Accounts.
 
-`ServiceAccount`s provide identies to processes running on k8s when the contact
+`ServiceAccount`s provide identities to processes running on k8s when they contact
 the k8s API.
 
 `Role`s and `RoleBinding`s are namespaced. There are also `ClusterRole` and
@@ -526,10 +543,10 @@ Resources are all the API Objects we have already met (`Pod`s, `Service`s,
 `Deployment`s, etc.)
 
 Verbs are the operations on for those resources. Which operations exist somewhat
-depends on the objecs. The classics are `create`, `delete`, `get`, `list`,
+depends on the objects. The classics are `create`, `delete`, `get`, `list`,
 `patch`, `update`, `watch`.
 
-Have a look at the existing `ServiceAccounts`, `ClusterRole`s, and
+Have a look at the existing `ServiceAccounts`, `ClusterRoles`, and
 `ClusterRoleBindings`.
 
 ## Interlude: Operators
@@ -537,25 +554,25 @@ Operators provide a way to package, deploy, and manage a
 Kubernetes application in a more automated and scalable manner. These are
 essentially software extensions that use custom resources to manage applications
 and their components. They often use Custom Resource Definitions (CRDs) and
-Custom Resources (CRs) (We won't use those).
+Custom Resources (CRs) (we won't use those).
 
 We will now use [shell-operator](https://github.com/flant/shell-operator) to
 write our own operator. The operator will create a new `echo` pod in each newly
 created namespace.
 
-Have a look at `08_rbac/operator_example/complete.yaml`.
+Have a look at `09_rbac/operator_example/complete.yaml`.
 
 ## Back to RBAC
 
-Apply `08_rbac/operator_example/operator.yaml`, and create a new namespace (e.g.
+Apply `09_rbac/operator_example/operator.yaml`, and create a new namespace (e.g.
 `kubectl create ns test`) observe the logs.
 You should see some permission denied messages. This is because our operator
 doesn't have the right permission yet. Check
-`08_rbac/operator_example/service_account.yaml` to see how we add a new
+`09_rbac/operator_example/service_account.yaml` to see how we add a new
 ServiceAccount, ClusterRole and ClusterRoleBinding.
 
 Apply, create another test namespace, check the logs. What is still missing?
-Have a look at `08_rbac/operator_example/complete.yaml` and see the last missing
+Have a look at `09_rbac/operator_example/complete.yaml` and see the last missing
 permissions. Create another namespace.
 
 ## Users
@@ -564,7 +581,7 @@ The K8s API does not have a concept of users. Instead, if you have a certificate
 sign by the cluster's CA, the common name (CN) of that certificate is your user
 name, the organisation fields (O) are the groups you belong to.
 
-Check your current user name:
+Check your current username:
 
 ```
 CERTIFICATE_DATA=$(kubectl config view --raw -o jsonpath='{.users[?(@.name == "kind-kind")].user.client-certificate-data}')
@@ -575,11 +592,11 @@ rm cert.pem
 
 Find out which `ClusterRoleBinding` exist for your username or group.
 
-## Create a new users
+## Create a new user
 You can create a new user by creating a new X509 certificate and get it signed
 by the k8s CA.
 
-Have a look at the script in `08_rbac/users/generate_role_for_user.sh` to see
+Have a look at the script in `09_rbac/users/generate_role_for_user.sh` to see
 how it is done. The example script expects to create a user with the same name
 as an existing namespace. Run the script (e.g. `USER=ops bash generate_role_for_user.sh` and test access: 
 `kubectl get pods -n ops --kubeconfig ops-config/ops.config`.
@@ -587,10 +604,9 @@ as an existing namespace. Run the script (e.g. `USER=ops bash generate_role_for_
 You can check if you are allowed to do a specific operation with `kubectl auth
 can-i create pods`.
 
-*You can also use something like keycloak for authentication against the API*
-
- 
-Lot's of chances to mess this up. Some good hinters in the
+*You can also use something like keycloak for authentication against the API.*
+  
+Lots of chances to mess this up. Some good hints in the
 [k8s docs](https://kubernetes.io/docs/concepts/security/rbac-good-practices/).
 
 
@@ -606,12 +622,12 @@ is short but thorough.
 You can set resources for cpu, memory and hugepages, each for limits and
 requests.
 
-In Practice:
+In practice:
 * For CPU: do not use limits, but requests for all pods
 * For Memory: requests = limits
 
 You can also specify limits for namespaces, see `ResourceQuotas`.
 
-In `09_resources` you can find a simple pod description that can be executed
+In `10_resources` you can find a simple pod description that can be executed
 with low and high (cpu) limits, execute them and check the logs how long the
 computation took.
